@@ -788,3 +788,324 @@ Ahora, siempre que hagamos clic en un icono de eliminación:
 Finalmente, Vue se da cuenta automáticamente de que el modelo de datos ha cambiado y vuelve a mostrar la lista de eventos.
 
 ## Modales
+
+En esta lección, aprenderemos cómo usar modales en nuestros proyectos.
+
+Nota:
+Los modales son pequeñas ventanas emergentes que son realmente útiles cuando desea mostrar al usuario contenido adicional, configuración o solicitud de consentimiento.
+
+Para usar modales, siga los pasos a continuación.
+
+### Importe los elementos modales en App.vue
+```html
+import {
+  ...
+  mdbModal,
+  mdbModalHeader,
+  mdbModalTitle,
+  mdbModalBody,
+  mdbModalFooter
+} from "mdbvue";
+
+[...]
+export default {
+  name: "App",
+	components: {
+	...
+	mdbModal,
+	mdbModalHeader,
+	mdbModalTitle,
+	mdbModalBody,
+	mdbModalFooter,
+	...
+	},
+  ```
+Agregue la nueva variable **modal: false** dentro de la función **data()**
+```html
+data() {
+    return {
+      events: [
+...
+      ],
+      modal: false,
+    };
+  },
+```
+Agregue el cuerpo modal a la plantilla antes de **mdb-container**
+```html
+<mdb-modal v-if="modal" @close="modal = false">
+  <mdb-modal-header>
+    <mdb-modal-title tag="h4" class="w-100 text-center font-weight-bold">Add new event</mdb-modal-title>
+  </mdb-modal-header>
+  <mdb-modal-body>Modal body</mdb-modal-body>
+  <mdb-modal-footer class="justify-content-center">
+    <mdb-btn color="info">Add</mdb-btn>
+  </mdb-modal-footer>
+</mdb-modal>
+```
+Actualice el botón Agregar evento para mostrar modal al hacer clic (actualice el valor modal a verdadero)
+```html
+<mdb-btn color="info" @click.native="modal = true">Add Event</mdb-btn>
+```
+El contenido final del archivo será:
+```html
+<template>
+  <mdb-container>
+    <mdb-row>
+      <mdb-col col="9">
+        <h2 class="text-uppercase my-3">Today:</h2>
+        <Event
+          v-for="(event, index) in events"
+          :index="index"
+          :time="event.time"
+          :title="event.title"
+          :location="event.location"
+          :description="event.description"
+          :key="index"
+          @delete="handleDelete"
+        />
+        <mdb-row>
+          <mdb-col xl="3" md="6" class="mx-auto text-center">
+            <mdb-btn color="info" @click.native="modal = true">Add Event</mdb-btn>
+          </mdb-col>
+        </mdb-row>
+      </mdb-col>
+      <mdb-col col="3">
+        <h3 class="text-uppercase my-3">Schedule</h3>
+        <h6 class="my-3">
+          It's going to be busy that today. You have
+          <b>{{events.length}} events</b> today.
+        </h6>
+        <h1 class="my-3">
+          <mdb-row>
+            <mdb-col col="3" class="text-center">
+              <mdb-icon far icon="sun"/>
+            </mdb-col>
+            <mdb-col col="9">Sunny</mdb-col>
+          </mdb-row>
+          <mdb-row>
+            <mdb-col col="3" class="text-center">
+              <mdb-icon icon="thermometer-three-quarters"/>
+            </mdb-col>
+            <mdb-col col="9">23°C</mdb-col>
+          </mdb-row>
+        </h1>
+        <p>
+          Don't forget your sunglasses. Today will dry and sunny, becoming
+          warm in the afternoon with temperatures of between 20 and 25
+          degrees.
+        </p>
+      </mdb-col>
+    </mdb-row>
+
+    <mdb-modal v-if="modal" @close="modal = false">
+      <mdb-modal-header>
+        <mdb-modal-title tag="h4" class="w-100 text-center font-weight-bold">Add new event</mdb-modal-title>
+      </mdb-modal-header>
+      <mdb-modal-body>Modal body</mdb-modal-body>
+      <mdb-modal-footer class="justify-content-center">
+        <mdb-btn color="info">Add</mdb-btn>
+      </mdb-modal-footer>
+    </mdb-modal>
+  </mdb-container>
+</template>
+
+<script>
+import {
+  mdbContainer,
+  mdbRow,
+  mdbCol,
+  mdbIcon,
+  mdbBtn,
+  mdbModal,
+  mdbModalHeader,
+  mdbModalTitle,
+  mdbModalBody,
+  mdbModalFooter
+} from "mdbvue";
+import Event from "@/components/Event";
+export default {
+  name: "App",
+  components: {
+    mdbContainer,
+    mdbRow,
+    mdbCol,
+    mdbIcon,
+    mdbBtn,
+    mdbModal,
+    mdbModalHeader,
+    mdbModalTitle,
+    mdbModalBody,
+    mdbModalFooter,
+    Event
+  },
+  data() {
+    return {
+      events: [
+        {
+          time: "10:00",
+          title: "Breakfast with Simon",
+          location: "Lounge Caffe",
+          description: "Discuss Q3 targets"
+        },
+        {
+          time: "10:30",
+          title: "Daily Standup Meeting (recurring)",
+          location: "Warsaw Spire Office"
+        },
+        {
+          time: "11:00",
+          title: "Call with HRs"
+        },
+        {
+          time: "12:00",
+          title: "Lunch with Timmoty",
+          location: "Canteen",
+          description: "Project evalutation "
+        }
+      ],
+      modal: false
+    };
+  },
+  methods: {
+    handleDelete(eventIndex) {
+      this.events.splice(eventIndex, 1);
+    }
+  }
+};
+</script>
+
+<style>
+</style>
+```
+Guarde el archivo y ejecute la aplicación:
+
+![Componentes](/MDBVue/img/vista9.gif "Componentes")
+
+Como puede ver, podemos cerrar ese modal haciendo clic en el signo X en la esquina superior derecha o simplemente haciendo clic en cualquier lugar fuera del modal.
+
+Nota:
+Los modales son excelentes herramientas y se pueden personalizar de varias maneras. Lo más probable es que los utilice para obtener el consentimiento del usuario para el uso de cookies o para aceptar una política de privacidad en un sitio web, mostrar un formulario de registro/inicio de sesión o algunos detalles adicionales como un mapa y/o formulario de contacto.
+
+Puede encontrar docenas de plantillas modales predefinidas.
+
+En esta lección, aprenderemos cómo manejar las entradas. Las entradas son componentes muy utilizados en el desarrollo web. Los usamos en todas partes, comenzando con el formulario de inicio de sesión, los formularios de suscripción al boletín, un nuevo editor de publicaciones hasta los paneles de configuración, etc.
+
+Simplemente siga los pasos a continuación.
+
+### Importar mdbInput y mdbTextarea a App.vue
+```html
+import {
+  ...
+  mdbInput,
+  mdbTextarea
+} from "mdbvue";
+
+[...]
+export default {
+  name: "App",
+	  components: {
+	    ...
+	    mdbInput,
+	    mdbTextarea,
+	    ...
+	  },
+```
+### Añadir un nuevo array newValues[] a data()
+```html
+data() {
+  return {
+    events: [
+		...
+    ],
+    modal: false,
+    newValues: []
+  };
+},
+```
+### Reemplace el cuerpo modal con el siguiente código
+```html
+<mdb-modal-body>
+  <form class="mx-3 grey-text">
+    <mdb-input
+      name="time"
+      label="Time"
+      icon="clock"
+      placeholder="12:30"
+      type="text"
+      @input="handleInput($event, 'time')"
+    />
+    <mdb-input
+      name="title"
+      label="Title"
+      icon="edit"
+      placeholder="Briefing"
+      type="text"
+      @input="handleInput($event, 'title')"
+    />
+    <mdb-input
+      name="location"
+      label="Location (optional)"
+      icon="map"
+      type="text"
+      @input="handleInput($event, 'location')"
+    />
+    <mdb-textarea
+      name="description"
+      label="Description (optional)"
+      icon="sticky-note"
+      @input="handleInput($event, 'description')"
+    />
+  </form>
+</mdb-modal-body>
+```
+Agregar la función handleInput
+```html
+handleInput(val, type) {
+  this.newValues[type] = val;
+  console.log(this.newValues);
+},
+```
+Veamos cómo funcionan las funciones handleInput(). Imprimamos para consolar nuestro objeto de estado cada vez que se llame a esta función. Para hacer esto, agregamos console.log (this.newValues); al cuerpo de la función:
+```html
+handleInput(val, type) {
+  this.newValues[type] = val;
+  console.log(this.newValues);
+},
+```
+![Componentes](/MDBVue/img/vista10.gif "Componentes")
+
+Cada vez que escribimos algo dentro de la entrada, su valor se agrega a la variable newValues ​​para que podamos usarlo cuando se envía nuestro formulario.
+
+Ya que tenemos todas nuestras entradas manejadas, eliminemos console.log () y pasemos a los pasos finales: enviar el formulario y agregar el nuevo elemento a la lista.
+
+### Agregue la función addEvent()
+```html
+addEvent() {
+  this.events.push({
+    time: this.newValues["time"],
+    title: this.newValues["title"],
+    location: this.newValues["location"],
+    description: this.newValues["description"]
+  });
+}
+```
+### Agregue @ click.native = "addEvent"
+
+Al botón Agregar en el pie de página modal:
+```html
+<mdb-btn color="info" @click.native="addEvent">Add</mdb-btn>
+```
+Ahora, cada vez que hagamos clic en el botón Agregar, activaremos la función addEvent() que agregará un nuevo elemento a la matriz de eventos usando push().
+
+Nota:
+No tenemos que agregar una identificación al nuevo evento nosotros mismos. Nuestro bucle v-for lo hará por nosotros automáticamente.
+
+![Componentes](/MDBVue/img/vista11.gif "Componentes")
+
+Resumen
+Nuestra aplicación está lista, sin embargo, todavía hay algunas cosas más que debemos hacer:
+- cambie el tipo de cualquier propiedad del evento (es decir, cambie la hora a JS Date en lugar de cadena)
+- llamar a una API externa para obtener una previsión meteorológica real
+- agregue validación a nuestro formulario (asegúrese de que el usuario complete todos los datos obligatorios)
+- manejar duplicados
